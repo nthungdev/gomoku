@@ -1,0 +1,13 @@
+{
+  "references": [
+    {
+      "path": "./backend"
+    },
+    {
+      "path": "./web"
+    }
+  ],
+  "files": [],
+  "include": [],
+  "exclude": ["**/node_modules"]
+}
