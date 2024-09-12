@@ -174,4 +174,8 @@ export default class Engine {
     }
     return []
   }
+
+  public getBoardState() {
+    return this.board.getState()
+  }
 }
