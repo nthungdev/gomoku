@@ -1,5 +1,11 @@
+interface PlayerConfig {
+  value: number
+}
+
 export default class Player {
-  public init() {
-    console.log('Player init');
+  public value: number;
+
+  constructor(config: PlayerConfig) {
+    this.value = config.value;
   }
 }
