@@ -1,21 +1,21 @@
 {
-  "name": "vite-react-express-ts-template",
-  "version": "0.0.1",
   "private": true,
   "workspaces": [
     "backend",
     "web",
-    "shared"
+    "common",
+    "engine",
+    "cli"
   ],
   "scripts": {
     "compile": "tsc --build --force tsconfig.json",
     "clean": "rm -rf cmd/dist client/dist",
     "backend": "cd backend && yarn dev",
     "web": "cd web && yarn start",
+    "cli": "cd cli && yarn start",
     "dev": "concurrently \"yarn backend\" \"yarn web\""
   },
   "devDependencies": {
-    "concurrently": "^8.2.2",
-    "typescript": "^5.2.2"
+    "concurrently": "^8.2.2"
   }
 }
