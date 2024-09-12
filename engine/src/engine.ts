@@ -58,6 +58,7 @@ export default class Engine {
   public checkWin() {
     let winner = null
     const winLength = 5
+    let winningPicks: number[][] = []
 
     // group the picks by player
     const playerPicks: Record<number, number[][]> = {}
@@ -82,16 +83,26 @@ export default class Engine {
       for (let i = 0; i < picks.length - 4; i++) {
         const [x, y] = picks[i]
         const restPicks = picks.slice(i + 1)
-        if (this.checkLine(x, y, restPicks, 'horizontal')) {
+        winningPicks = this.checkLine(x, y, restPicks, 'horizontal')
+        if (winningPicks.length) {
           winner = player
-        } else if (this.checkLine(x, y, restPicks, 'vertical')) {
+          break
+        }
+
+        winningPicks = this.checkLine(x, y, restPicks, 'vertical')
+        if (winningPicks.length) {
           winner = player
-        } else if (this.checkLine(x, y, restPicks, 'diagonal')) {
+          break
+        }
+
+        winningPicks = this.checkLine(x, y, restPicks, 'diagonal')
+        if (winningPicks.length) {
           winner = player
+          break
         }
       }
     }
-    return { winner }
+    return { winner, winningPicks }
   }
 
   private checkLine(
@@ -114,10 +125,10 @@ export default class Engine {
         streakCount++
         winningPicks.push([x1, y1])
         if (streakCount === this.config.winLength) {
-          return true
+          return winningPicks
         }
       }
     }
-    return false
+    return []
   }
 }
