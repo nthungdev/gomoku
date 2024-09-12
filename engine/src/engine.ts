@@ -7,28 +7,34 @@ interface EngineConfig {
     columns: number
   }
   winLength: number
+  players: Player[]
+  firstPlayer: Player
 }
 
 export default class Engine {
   private board: Board
-  private playerA: Player
-  private playerB: Player
   private turnPlayer: Player
   private config: EngineConfig
 
   constructor(config: EngineConfig) {
+    if (config.players.length !== 2) {
+      throw new Error('Invalid number of players')
+    } else if (config.players[0].value === config.players[1].value) {
+      throw new Error('Players should have different values')
+    } else if (
+      !config.players.find((player) => player === config.firstPlayer)
+    ) {
+      throw new Error('First player should be one of the players')
+    }
+
     this.board = new Board()
-    this.playerA = new Player()
-    this.playerB = new Player()
-    this.turnPlayer = this.playerA
+    this.turnPlayer = config.firstPlayer
     this.config = config
   }
 
   private init() {
     const { boardSize } = this.config
     this.board.init(boardSize.rows, boardSize.columns)
-    this.playerA.init()
-    this.playerB.init()
   }
 
   public start() {
@@ -39,16 +45,44 @@ export default class Engine {
     return this.turnPlayer
   }
 
-  public play(player: Player, x: number, y: number) {
-    // TODO check if the player is valid
-    // TODO check if the player is the turn player
-    // TODO check if the location is valid to play on
-    // TODO update the board
-    // TODO update the turn player
-    // TODO check if the player wins
+  public play(player: Player, row: number, column: number) {
+    // check if the player is valid
+    if (!this.config.players.find((p) => p === player)) {
+      throw new Error('Invalid player')
+    }
+
+    // check if it's the player's turn
+    if (player !== this.turnPlayer) {
+      throw new Error('Not the turn player')
+    }
+
+    // check if the location is valid
+    if (row < 0 || row >= this.config.boardSize.rows) {
+      throw new Error('Invalid row')
+    }
+    if (column < 0 || column >= this.config.boardSize.columns) {
+      throw new Error('Invalid column')
+    }
+    if (this.board.getState()[row][column] !== 0) {
+      throw new Error('Location is already taken')
+    }
+
+    // update the board
+    this.board.update(row, column, player.value)
+
+    // update the turn player
+    const nextPlayerIndex = (this.config.players.indexOf(player) + 1) % 2
+    this.turnPlayer = this.config.players[nextPlayerIndex]
+
+    // check if the player wins
+    const { winner, winningPicks } = this.checkWin()
+    if (winner) {
+      console.log(`Player ${winner} wins!`)
+      console.log('Winning picks:', winningPicks)
+    }
   }
 
-  public updateBoard(newBoard: Board) {
+  public replaceBoard(newBoard: Board) {
     this.board = newBoard
   }
 
@@ -56,7 +90,7 @@ export default class Engine {
    * @returns the player who wins the game, else null
    */
   public checkWin() {
-    let winner = null
+    let winnerValue: number | null = null
     const winLength = 5
     let winningPicks: number[][] = []
 
@@ -75,33 +109,42 @@ export default class Engine {
       }
     }
 
-    for (const player in playerPicks) {
+    for (const p in playerPicks) {
+      const player = Number(p)
       const picks = playerPicks[player]
+
       if (picks.length < winLength) {
         continue
       }
+
       for (let i = 0; i < picks.length - 4; i++) {
         const [x, y] = picks[i]
         const restPicks = picks.slice(i + 1)
+
         winningPicks = this.checkLine(x, y, restPicks, 'horizontal')
         if (winningPicks.length) {
-          winner = player
+          winnerValue = player
           break
         }
 
         winningPicks = this.checkLine(x, y, restPicks, 'vertical')
         if (winningPicks.length) {
-          winner = player
+          winnerValue = player
           break
         }
 
         winningPicks = this.checkLine(x, y, restPicks, 'diagonal')
         if (winningPicks.length) {
-          winner = player
+          winnerValue = player
           break
         }
       }
+
+      if (winnerValue) {
+        break
+      }
     }
+    const winner = this.config.players.find((player) => player.value === winnerValue)
     return { winner, winningPicks }
   }
 
