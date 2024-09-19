@@ -63,7 +63,7 @@ export default class Engine {
     if (column < 0 || column >= this.config.boardSize.columns) {
       throw new Error('Invalid column')
     }
-    if (this.board.getState()[row][column] !== 0) {
+    if (this.getBoardState()[row][column] !== 0) {
       throw new Error('Location is already taken')
     }
 
@@ -76,10 +76,11 @@ export default class Engine {
 
     // check if the player wins
     const { winner, winningPicks } = this.checkWin()
-    if (winner) {
-      console.log(`Player ${winner} wins!`)
-      console.log('Winning picks:', winningPicks)
-    }
+    // if (winner) {
+    //   console.log(`Player ${winner} wins!`)
+    //   console.log('Winning picks:', winningPicks)
+    // }
+    return { winner, winningPicks }
   }
 
   public replaceBoard(newBoard: Board) {
@@ -144,7 +145,9 @@ export default class Engine {
         break
       }
     }
-    const winner = this.config.players.find((player) => player.value === winnerValue)
+    const winner = this.config.players.find(
+      (player) => player.value === winnerValue
+    )
     return { winner, winningPicks }
   }
 
