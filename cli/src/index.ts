@@ -3,24 +3,17 @@ import { createInterface } from 'readline'
 import * as process from 'process'
 import { Engine, Player } from '@gomoku/engine'
 
-console.log(figlet.textSync('Gomoku'))
-
 const readline = createInterface({
   input: process.stdin,
   output: process.stdout,
 })
 
-const players = [new Player({ value: 1 }), new Player({ value: 2 })]
-const engine = new Engine({
-  boardSize: { rows: 10, columns: 10 },
-  winLength: 5,
-  players,
-  firstPlayer: players[0],
-})
-engine.start()
-
+/**
+ * @param input string contains "row column"
+ * @returns null if failed to parse, else { row: number, column: number }
+ */
 const parseMoveInput = (input: string) => {
-  const [row, column] = input.split(' ')
+  const [row, column] = input.trim().split(' ')
   const parsedRow = parseInt(row)
   const parsedColumn = parseInt(column)
   if (isNaN(parsedRow) || isNaN(parsedColumn)) {
@@ -39,22 +32,23 @@ const printBoardState = (boardState: number[][]) => {
   console.log(boardString)
 }
 
-const loop = () => {
+const loop = (engine: Engine) => {
   console.log('_'.repeat(20))
-  const turnPlayer = engine.getTurnPlayer()
   printBoardState(engine.getBoardState())
+
+  const turnPlayer = engine.getTurnPlayer()
   readline.question(
     `${turnPlayer}: Enter your move (row column): `,
     (input) => {
       const move = parseMoveInput(input)
       if (!move) {
         console.log('Invalid input, please try again')
-        return loop()
+        return loop(engine)
       }
-
       const { row, column } = move
+
       try {
-        const { winner, winningPicks } = engine.play(turnPlayer, row, column)
+        const { winner } = engine.play(turnPlayer, row, column)
         if (winner) {
           console.log(`${winner} wins!`)
           printBoardState(engine.getBoardState())
@@ -66,12 +60,48 @@ const loop = () => {
         } else {
           console.log('An error occurred')
         }
-        return loop()
+        return loop(engine)
       }
-      // printBoardState(engine.getBoardState())
-      return loop()
+
+      return loop(engine)
     }
   )
 }
 
-loop()
+const promptName = async (prompt: string, takenName?: string) => {
+  const name = (
+    await new Promise<string>((resolve) => {
+      readline.question(prompt, resolve)
+    })
+  ).trim()
+  if (name === '') {
+    console.log('Name cannot be empty')
+    return promptName(prompt, takenName)
+  } else if (name === takenName) {
+    console.log('Name already taken')
+    return promptName(prompt, takenName)
+  }
+  return name
+}
+
+const game = async () => {
+  console.log(figlet.textSync('Gomoku'))
+
+  const name1 = await promptName("What is player 1's name? ")
+  const name2 = await promptName("What is player 2's name? ", name1)
+  const players: Player[] = [
+    new Player({ value: 1, name: name1.trim() }),
+    new Player({ value: 2, name: name2.trim() }),
+  ]
+
+  const engine = new Engine({
+    boardSize: { rows: 10, columns: 10 },
+    winLength: 5,
+    players,
+    firstPlayer: players[0],
+  })
+  engine.start()
+  loop(engine)
+}
+
+game()
