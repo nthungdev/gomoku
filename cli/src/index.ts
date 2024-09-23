@@ -3,6 +3,17 @@ import { createInterface } from 'readline'
 import * as process from 'process'
 import { Engine, Player } from '@gomoku/engine'
 
+const PLAYER_1_VALUE = 1
+const PLAYER_2_VALUE = 2
+const PLAYER_1_SYMBOL = '✖'
+const PLAYER_2_SYMBOL = '◯'
+
+const cellToSymbol: Record<number, string> = {
+  0: '.',
+  [PLAYER_1_VALUE]: PLAYER_1_SYMBOL,
+  [PLAYER_2_VALUE]: PLAYER_2_SYMBOL,
+}
+
 const readline = createInterface({
   input: process.stdin,
   output: process.stdout,
@@ -27,7 +38,7 @@ const parseMoveInput = (input: string) => {
 
 const printBoardState = (boardState: number[][]) => {
   const boardString = boardState
-    .map((row) => row.map((cell) => (cell === 0 ? '.' : cell)).join(' '))
+    .map((row) => row.map((cell) => cellToSymbol[cell]).join(' '))
     .join('\n')
   console.log(boardString)
 }
@@ -90,8 +101,8 @@ const game = async () => {
   const name1 = await promptName("What is player 1's name? ")
   const name2 = await promptName("What is player 2's name? ", name1)
   const players: Player[] = [
-    new Player({ value: 1, name: name1.trim() }),
-    new Player({ value: 2, name: name2.trim() }),
+    new Player({ value: PLAYER_1_VALUE, name: name1.trim() }),
+    new Player({ value: PLAYER_2_VALUE, name: name2.trim() }),
   ]
 
   const engine = new Engine({
