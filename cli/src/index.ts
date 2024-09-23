@@ -49,7 +49,7 @@ const loop = (engine: Engine) => {
 
   const turnPlayer = engine.getTurnPlayer()
   readline.question(
-    `${turnPlayer}: Enter your move (row column): `,
+    `${turnPlayer}: Enter your move ${cellToSymbol[turnPlayer.value]} (row column): `,
     (input) => {
       const move = parseMoveInput(input)
       if (!move) {
