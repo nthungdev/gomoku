@@ -70,7 +70,7 @@ export default class Engine {
     this.board.update(row, column, player.value)
 
     // update the next turn player
-    const nextPlayerIndex = (this.config.players.indexOf(player) + 1) % 2
+    const nextPlayerIndex = (this.config.players.indexOf(player) + 1) % this.config.players.length
     this.turnPlayer = this.config.players[nextPlayerIndex]
 
     return this.checkWin()
