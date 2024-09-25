@@ -67,20 +67,13 @@ export default class Engine {
       throw new Error('Location is already taken')
     }
 
-    // update the board
     this.board.update(row, column, player.value)
 
-    // update the turn player
+    // update the next turn player
     const nextPlayerIndex = (this.config.players.indexOf(player) + 1) % 2
     this.turnPlayer = this.config.players[nextPlayerIndex]
 
-    // check if the player wins
-    const { winner, winningPicks } = this.checkWin()
-    // if (winner) {
-    //   console.log(`Player ${winner} wins!`)
-    //   console.log('Winning picks:', winningPicks)
-    // }
-    return { winner, winningPicks }
+    return this.checkWin()
   }
 
   public replaceBoard(newBoard: Board) {
