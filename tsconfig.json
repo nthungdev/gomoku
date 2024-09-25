@@ -5,6 +5,15 @@
     },
     {
       "path": "./web"
+    },
+    {
+      "path": "./common"
+    },
+    {
+      "path": "./engine"
+    },
+    {
+      "path": "./cli"
     }
   ],
   "files": [],

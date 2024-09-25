@@ -1,5 +1,5 @@
 {
-  "name": "backend",
+  "name": "@gomoku/backend",
   "version": "0.0.0",
   "private": true,
   "main": "index.js",
@@ -14,7 +14,7 @@
     "dotenv": "^16.3.1",
     "express": "~4.16.1",
     "morgan": "~1.9.1",
-    "shared": "file:./../shared"
+    "@gomoku/common": "0.0.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
