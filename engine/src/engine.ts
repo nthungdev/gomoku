@@ -92,51 +92,38 @@ export default class Engine {
    */
   public checkWin() {
     let winnerValue: number | null = null
-    const winLength = 5
+    const { winLength } = this.config
     let winningPicks: number[][] = []
 
-    // group the picks by player
-    const playerPicks: Record<number, number[][]> = {}
-    for (let row = 0; row < this.config.boardSize.rows; row++) {
-      for (let column = 0; column < this.config.boardSize.columns; column++) {
-        const value = this.board.getState()[row][column]
-        if (value === 0) {
-          continue
-        }
-        if (!playerPicks[value]) {
-          playerPicks[value] = []
-        }
-        playerPicks[value].push([row, column])
-      }
-    }
+    const playerPicks = this.board.getPicksByPlayer()
 
     for (const p in playerPicks) {
-      const player = Number(p)
-      const picks = playerPicks[player]
+      const playerValue = Number(p)
+      const picks = playerPicks[playerValue]
 
       if (picks.length < winLength) {
         continue
       }
 
-      for (let i = 0; i < picks.length - 4; i++) {
+      for (let i = 0; i < picks.length - winLength - 1; i++) {
         const [x, y] = picks[i]
         const restPicks = picks.slice(i + 1)
 
         winningPicks = this.checkLine(x, y, restPicks, 'horizontal')
         if (winningPicks.length) {
-          winnerValue = player
+          winnerValue = playerValue
           break
         }
 
         winningPicks = this.checkLine(x, y, restPicks, 'vertical')
         if (winningPicks.length) {
-          winnerValue = player
+          winnerValue = playerValue
           break
         }
 
         winningPicks = this.checkLine(x, y, restPicks, 'diagonal')
         if (winningPicks.length) {
-          winnerValue = player
+          winnerValue = playerValue
           break
         }
       }
