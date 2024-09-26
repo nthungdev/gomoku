@@ -1,4 +1,4 @@
-export default class Board {
+  export default class Board {
   private board: number[][]
 
   constructor() {
@@ -9,8 +9,12 @@ export default class Board {
     this.board = new Array(rows).fill(0).map(() => new Array(columns).fill(0))
   }
 
-  public update(row: number, column: number, value: number) {
+  public updateCell(row: number, column: number, value: number) {
     this.board[row][column] = value
+  }
+
+  public getCell(row: number, column: number) {
+    return this.board[row][column]
   }
 
   public getState() {

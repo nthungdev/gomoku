@@ -4,7 +4,7 @@ import assert from 'assert'
 function updateBoardWith(board: Board, sampleBoard: number[][]) {
   for (let i = 0; i < sampleBoard.length; i++) {
     for (let j = 0; j < sampleBoard[i].length; j++) {
-      board.update(i, j, sampleBoard[i][j])
+      board.updateCell(i, j, sampleBoard[i][j])
     }
   }
 }
@@ -63,20 +63,21 @@ describe('Check winners', function () {
       const board = new Board()
       board.init(size.rows, size.columns)
       updateBoardWith(board, test.board)
-      const players = [new Player({ value: 1 }), new Player({ value: 2 })]
+      const player1 = new Player({ value: 1 })
+      const player2 = new Player({ value: 2 })
       const engine = new Engine({
         boardSize: {
           rows: size.rows,
           columns: size.columns,
         },
         winLength: 5,
-        players,
-        firstPlayer: players[0],
+        player1,
+        player2,
       })
       engine.start()
       engine.replaceBoard(board)
       assert.deepEqual(engine.checkWin(), {
-        winner: players[0],
+        winner: player1,
         winningPicks: test.winningPicks,
       })
     })

@@ -1,5 +1,6 @@
 import Board from './board'
 import Player from './player'
+import assert from 'assert'
 
 interface EngineConfig {
   boardSize: {
@@ -7,28 +8,25 @@ interface EngineConfig {
     columns: number
   }
   winLength: number
-  players: Player[]
-  firstPlayer: Player
+  /** player1 is the first turn player */
+  player1: Player
+  player2: Player
 }
 
 export default class Engine {
   private board: Board
+  private players: Player[]
   private turnPlayer: Player
   private config: EngineConfig
 
   constructor(config: EngineConfig) {
-    if (config.players.length !== 2) {
-      throw new Error('Invalid number of players')
-    } else if (config.players[0].value === config.players[1].value) {
+    if (config.player1.value === config.player2.value) {
       throw new Error('Players should have different values')
-    } else if (
-      !config.players.find((player) => player === config.firstPlayer)
-    ) {
-      throw new Error('First player should be one of the players')
     }
 
     this.board = new Board()
-    this.turnPlayer = config.firstPlayer
+    this.players = [config.player1, config.player2]
+    this.turnPlayer = config.player1
     this.config = config
   }
 
@@ -47,7 +45,7 @@ export default class Engine {
 
   public play(player: Player, row: number, column: number) {
     // check if the player is valid
-    if (!this.config.players.find((p) => p === player)) {
+    if (!this.players.find((p) => p === player)) {
       throw new Error('Invalid player')
     }
 
@@ -67,11 +65,12 @@ export default class Engine {
       throw new Error('Location is already taken')
     }
 
-    this.board.update(row, column, player.value)
+    this.board.updateCell(row, column, player.value)
 
     // update the next turn player
-    const nextPlayerIndex = (this.config.players.indexOf(player) + 1) % this.config.players.length
-    this.turnPlayer = this.config.players[nextPlayerIndex]
+    const nextPlayerIndex =
+      (this.players.indexOf(player) + 1) % this.players.length
+    this.turnPlayer = this.players[nextPlayerIndex]
 
     return this.checkWin()
   }
@@ -125,9 +124,7 @@ export default class Engine {
         break
       }
     }
-    const winner = this.config.players.find(
-      (player) => player.value === winnerValue
-    )
+    const winner = this.players.find((player) => player.value === winnerValue)
     return { winner, winningPicks }
   }
 
