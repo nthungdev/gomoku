@@ -59,23 +59,21 @@ describe('Check winners', function () {
 
   tests.forEach((test, index) => {
     it(`should return the correct winner for test ${index + 1}`, function () {
-      const size = { rows: test.board[0].length, columns: test.board.length }
-      const board = new Board()
-      board.init(size.rows, size.columns)
-      updateBoardWith(board, test.board)
+      const boardSize = {
+        rows: test.board[0].length,
+        columns: test.board.length,
+      }
+      const testBoard = new Board(boardSize.rows, boardSize.columns)
+      updateBoardWith(testBoard, test.board)
       const player1 = new Player({ value: 1 })
       const player2 = new Player({ value: 2 })
       const engine = new Engine({
-        boardSize: {
-          rows: size.rows,
-          columns: size.columns,
-        },
+        boardSize,
         winLength: 5,
         player1,
         player2,
       })
-      engine.start()
-      engine.replaceBoard(board)
+      engine.replaceBoard(testBoard)
       assert.deepEqual(engine.checkWin(), {
         winner: player1,
         winningPicks: test.winningPicks,

@@ -1,11 +1,7 @@
   export default class Board {
   private board: number[][]
 
-  constructor() {
-    this.board = []
-  }
-
-  public init(rows: number, columns: number) {
+  constructor(rows: number, columns: number) {
     this.board = new Array(rows).fill(0).map(() => new Array(columns).fill(0))
   }
 

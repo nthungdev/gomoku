@@ -11,6 +11,7 @@
     "compile": "tsc --build --force tsconfig.json",
     "clean": "rm -rf cmd/dist client/dist",
     "backend": "cd backend && yarn dev",
+    "engine:build": "cd engine && yarn build",
     "web": "cd web && yarn start",
     "cli": "cd cli && yarn start",
     "dev": "concurrently \"yarn backend\" \"yarn web\""

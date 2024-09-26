@@ -24,19 +24,10 @@ export default class Engine {
       throw new Error('Players should have different values')
     }
 
-    this.board = new Board()
+    this.board = new Board(config.boardSize.rows, config.boardSize.columns)
     this.players = [config.player1, config.player2]
     this.turnPlayer = config.player1
     this.config = config
-  }
-
-  private init() {
-    const { boardSize } = this.config
-    this.board.init(boardSize.rows, boardSize.columns)
-  }
-
-  public start() {
-    this.init()
   }
 
   public getTurnPlayer() {
