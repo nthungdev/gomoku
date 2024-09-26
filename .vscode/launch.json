@@ -12,6 +12,13 @@
       "preLaunchTask": "tsc: build - tsconfig.json",
       "outFiles": ["${workspaceFolder}/cli/dist/**/*.js"],
       "console": "integratedTerminal"
-    }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch File",
+      "program": "${file}",
+      "preLaunchTask": "tsc: build - tsconfig.json",
+    },
   ]
 }

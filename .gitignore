@@ -3,3 +3,5 @@ dist
 tsconfig.app.*
 tsconfig.node.*
 tsconfig.tsbuildinfo
+coverage
+.nyc_output

@@ -1,0 +1,26 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "./engine"
+		},
+		{
+			"path": "./cli"
+		},
+		{
+			"path": "./backend"
+		},
+		{
+			"path": "./web"
+		},
+		{
+			"path": "./common"
+		},
+	],
+	"settings": {
+		"mochaExplorer.files": "**/*.spec.ts",
+		"mochaExplorer.require": "ts-node/register",
+	}
+}
