@@ -100,18 +100,15 @@ const game = async () => {
 
   const name1 = await promptName("What is player 1's name? ")
   const name2 = await promptName("What is player 2's name? ", name1)
-  const players: Player[] = [
-    new Player({ value: PLAYER_1_VALUE, name: name1.trim() }),
-    new Player({ value: PLAYER_2_VALUE, name: name2.trim() }),
-  ]
+  const player1 = new Player({ value: PLAYER_1_VALUE, name: name1.trim() })
+  const player2 = new Player({ value: PLAYER_2_VALUE, name: name2.trim() })
 
   const engine = new Engine({
     boardSize: { rows: 10, columns: 10 },
     winLength: 5,
-    players,
-    firstPlayer: players[0],
+    player1,
+    player2
   })
-  engine.start()
   loop(engine)
 }
 

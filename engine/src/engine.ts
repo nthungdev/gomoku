@@ -1,5 +1,6 @@
 import Board from './board'
 import Player from './player'
+import assert from 'assert'
 
 interface EngineConfig {
   boardSize: {
@@ -7,38 +8,27 @@ interface EngineConfig {
     columns: number
   }
   winLength: number
-  players: Player[]
-  firstPlayer: Player
+  /** player1 is the first turn player */
+  player1: Player
+  player2: Player
 }
 
 export default class Engine {
   private board: Board
+  private players: Player[]
   private turnPlayer: Player
   private config: EngineConfig
 
   constructor(config: EngineConfig) {
-    if (config.players.length !== 2) {
-      throw new Error('Invalid number of players')
-    } else if (config.players[0].value === config.players[1].value) {
-      throw new Error('Players should have different values')
-    } else if (
-      !config.players.find((player) => player === config.firstPlayer)
-    ) {
-      throw new Error('First player should be one of the players')
-    }
+    assert(
+      config.player1.value !== config.player2.value,
+      'Players should have different values'
+    )
 
-    this.board = new Board()
-    this.turnPlayer = config.firstPlayer
+    this.board = new Board(config.boardSize.rows, config.boardSize.columns)
+    this.players = [config.player1, config.player2]
+    this.turnPlayer = config.player1
     this.config = config
-  }
-
-  private init() {
-    const { boardSize } = this.config
-    this.board.init(boardSize.rows, boardSize.columns)
-  }
-
-  public start() {
-    this.init()
   }
 
   public getTurnPlayer() {
@@ -47,7 +37,7 @@ export default class Engine {
 
   public play(player: Player, row: number, column: number) {
     // check if the player is valid
-    if (!this.config.players.find((p) => p === player)) {
+    if (!this.players.find((p) => p === player)) {
       throw new Error('Invalid player')
     }
 
@@ -67,20 +57,14 @@ export default class Engine {
       throw new Error('Location is already taken')
     }
 
-    // update the board
-    this.board.update(row, column, player.value)
+    this.board.updateCell(row, column, player.value)
 
-    // update the turn player
-    const nextPlayerIndex = (this.config.players.indexOf(player) + 1) % 2
-    this.turnPlayer = this.config.players[nextPlayerIndex]
+    // update the next turn player
+    const nextPlayerIndex =
+      (this.players.indexOf(player) + 1) % this.players.length
+    this.turnPlayer = this.players[nextPlayerIndex]
 
-    // check if the player wins
-    const { winner, winningPicks } = this.checkWin()
-    // if (winner) {
-    //   console.log(`Player ${winner} wins!`)
-    //   console.log('Winning picks:', winningPicks)
-    // }
-    return { winner, winningPicks }
+    return this.checkWin()
   }
 
   public replaceBoard(newBoard: Board) {
@@ -92,51 +76,38 @@ export default class Engine {
    */
   public checkWin() {
     let winnerValue: number | null = null
-    const winLength = 5
+    const { winLength } = this.config
     let winningPicks: number[][] = []
 
-    // group the picks by player
-    const playerPicks: Record<number, number[][]> = {}
-    for (let row = 0; row < this.config.boardSize.rows; row++) {
-      for (let column = 0; column < this.config.boardSize.columns; column++) {
-        const value = this.board.getState()[row][column]
-        if (value === 0) {
-          continue
-        }
-        if (!playerPicks[value]) {
-          playerPicks[value] = []
-        }
-        playerPicks[value].push([row, column])
-      }
-    }
+    const playerPicks = this.board.getPicksByPlayer()
 
     for (const p in playerPicks) {
-      const player = Number(p)
-      const picks = playerPicks[player]
+      const playerValue = Number(p)
+      const picks = playerPicks[playerValue]
 
       if (picks.length < winLength) {
         continue
       }
 
-      for (let i = 0; i < picks.length - 4; i++) {
+      for (let i = 0; i < picks.length - (winLength - 1); i++) {
         const [x, y] = picks[i]
         const restPicks = picks.slice(i + 1)
 
         winningPicks = this.checkLine(x, y, restPicks, 'horizontal')
         if (winningPicks.length) {
-          winnerValue = player
+          winnerValue = playerValue
           break
         }
 
         winningPicks = this.checkLine(x, y, restPicks, 'vertical')
         if (winningPicks.length) {
-          winnerValue = player
+          winnerValue = playerValue
           break
         }
 
         winningPicks = this.checkLine(x, y, restPicks, 'diagonal')
         if (winningPicks.length) {
-          winnerValue = player
+          winnerValue = playerValue
           break
         }
       }
@@ -145,9 +116,7 @@ export default class Engine {
         break
       }
     }
-    const winner = this.config.players.find(
-      (player) => player.value === winnerValue
-    )
+    const winner = this.players.find((player) => player.value === winnerValue)
     return { winner, winningPicks }
   }
 
