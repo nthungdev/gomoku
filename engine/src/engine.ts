@@ -20,9 +20,10 @@ export default class Engine {
   private config: EngineConfig
 
   constructor(config: EngineConfig) {
-    if (config.player1.value === config.player2.value) {
-      throw new Error('Players should have different values')
-    }
+    assert(
+      config.player1.value !== config.player2.value,
+      'Players should have different values'
+    )
 
     this.board = new Board(config.boardSize.rows, config.boardSize.columns)
     this.players = [config.player1, config.player2]
