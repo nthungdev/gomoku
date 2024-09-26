@@ -98,7 +98,7 @@ export default class Engine {
         continue
       }
 
-      for (let i = 0; i < picks.length - winLength - 1; i++) {
+      for (let i = 0; i < picks.length - (winLength - 1); i++) {
         const [x, y] = picks[i]
         const restPicks = picks.slice(i + 1)
 
