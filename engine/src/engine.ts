@@ -53,7 +53,7 @@ export default class Engine {
     if (column < 0 || column >= this.config.boardSize.columns) {
       throw new Error('Invalid column')
     }
-    if (this.getBoardState()[row][column] !== 0) {
+    if (this.board.getCell(row, column) !== 0) {
       throw new Error('Location is already taken')
     }
 
@@ -145,9 +145,5 @@ export default class Engine {
       }
     }
     return []
-  }
-
-  public getBoardState() {
-    return this.board.getState()
   }
 }
