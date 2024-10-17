@@ -1,33 +1,30 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useEffect, useState } from 'react'
 import './App.css'
+import { socket } from './socket'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [isConnected, setIsConnected] = useState(socket.connected)
+
+  useEffect(() => {
+    socket.on('connect', () => {
+      setIsConnected(true)
+    })
+
+    socket.on('disconnect', () => {
+      setIsConnected(false)
+    })
+
+    socket.connect()
+
+    return () => {
+      socket.off('connect')
+      socket.off('disconnect')
+    }
+  }, [])
 
   return (
-    <div className='h-screen flex flex-col items-center bg-gray-800 text-gray-50 space-y-4'>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1 className="text-4xl font-bold underline">Vite + React</h1>
-      <div className='flex flex-col items-center'>
-        <button className='rounded-full bg-gray-100 text-gray-800 px-2 hover:shadow-lg hover:shadow-white' onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+    <div className="h-screen flex flex-col items-center bg-gray-800 text-gray-50 space-y-4">
+      Socket Connected: {isConnected ? 'Yes' : 'No'}
     </div>
   )
 }
