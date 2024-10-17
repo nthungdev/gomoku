@@ -1,6 +1,7 @@
 import dotenv from 'dotenv'
 import { Server, createServer } from 'http'
 import app from './app'
+import { startSocket } from './socket'
 
 dotenv.config()
 
@@ -10,6 +11,8 @@ const server: Server = createServer(app)
 app.get('/', (req, res) => {
   res.send('Gomoku Server!')
 })
+
+startSocket(server)
 
 server.listen(port, () => {
   console.log(`Server listening on http://localhost:${port}`)
