@@ -6,19 +6,22 @@ function App() {
   const [isConnected, setIsConnected] = useState(socket.connected)
 
   useEffect(() => {
-    socket.on('connect', () => {
+    function onConnect() {
       setIsConnected(true)
-    })
+    }
 
-    socket.on('disconnect', () => {
+    function onDisconnect() {
       setIsConnected(false)
-    })
+    }
+
+    socket.on('connect', onConnect)
+    socket.on('disconnect', onDisconnect)
 
     socket.connect()
 
     return () => {
-      socket.off('connect')
-      socket.off('disconnect')
+      socket.off('connect', onConnect)
+      socket.off('disconnect', onDisconnect)
     }
   }, [])
 
