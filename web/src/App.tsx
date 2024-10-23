@@ -1,29 +1,8 @@
-import { useEffect, useState } from 'react'
 import './App.css'
-import { socket } from './socket'
+import { useSocketIoContext } from './contexts/socketIoContext'
 
 function App() {
-  const [isConnected, setIsConnected] = useState(socket.connected)
-
-  useEffect(() => {
-    function onConnect() {
-      setIsConnected(true)
-    }
-
-    function onDisconnect() {
-      setIsConnected(false)
-    }
-
-    socket.on('connect', onConnect)
-    socket.on('disconnect', onDisconnect)
-
-    socket.connect()
-
-    return () => {
-      socket.off('connect', onConnect)
-      socket.off('disconnect', onDisconnect)
-    }
-  }, [])
+  const { isConnected } = useSocketIoContext()
 
   return (
     <div className="h-screen flex flex-col items-center bg-gray-800 text-gray-50 space-y-4">
