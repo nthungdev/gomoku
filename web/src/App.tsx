@@ -1,5 +1,5 @@
 import './App.css'
-import { useSocketIoContext } from './contexts/socketIoContext'
+import { useSocketIoContext } from './contexts/SocketIoContext'
 
 function App() {
   const { isConnected } = useSocketIoContext()
