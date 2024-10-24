@@ -2,9 +2,7 @@
   "compilerOptions": {
     "target": "ESNext" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
     "incremental": true,
-    /* Modules */
     "module": "CommonJS" /* Specify what module code is generated. */,
-    // "rootDir": "./src" /* Specify the root folder within your source files. */,
     "moduleResolution": "Node" /* Specify how TypeScript looks up a file from a given module specifier. */,
     "sourceMap": true /* Create source map files for emitted JavaScript files. */,
     "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */,
@@ -15,12 +13,14 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "paths": {
-      "@/*": ["./src/*"],
-    }
+      "@/*": ["./src/*"]
+    },
   },
-  "include": ["./src/**/*.ts"],
+  "include": ["./src/**/*.ts", "./src/**/*.d.ts"],
   "exclude": ["node_modules"],
   "ts-node": {
+    // To make type augmentation work
+    "files": true,
     "require": ["tsconfig-paths/register"]
   }
 }
