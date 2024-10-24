@@ -11,6 +11,14 @@ export default class MemoryDB implements DB {
     return roomId
   }
 
+  async getRooms(): Promise<Room[]> {
+    return this.rooms
+  }
+
+  async getRoom(roomId: string): Promise<Room | null> {
+    return this.rooms.find(({ id }) => id === roomId) || null
+  }
+
   async createRoom(): Promise<string> {
     const roomId = this.generateUniqueRoomId()
     this.rooms.push({

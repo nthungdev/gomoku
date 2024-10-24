@@ -8,6 +8,8 @@ export interface Room {
 }
 
 export interface DB {
+  getRooms(): Promise<Room[]>
+  getRoom(roomId: string): Promise<Room | null>
   /**
    * Create a new room and return its ID
    */
