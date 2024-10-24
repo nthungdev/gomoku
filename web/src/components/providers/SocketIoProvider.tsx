@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { socket } from '../../socket'
-import { SocketIoContext } from '../../contexts/socketIoContext'
+import { SocketIoContext } from '../../contexts/SocketIoContext'
+import { ACTION_CREATE_ROOM, ACTION_JOIN_ROOM } from '@gomoku/common'
 
 export default function SocketIoProvider({
   children,
@@ -8,6 +9,14 @@ export default function SocketIoProvider({
   children: React.ReactNode
 }) {
   const [isConnected, setIsConnected] = useState(socket.connected)
+
+  function joinRoom(roomId: string) {
+    socket.emit(ACTION_JOIN_ROOM, roomId)
+  }
+
+  function createRoom() {
+    socket.emit(ACTION_CREATE_ROOM)
+  }
 
   useEffect(() => {
     function onConnect() {
@@ -29,8 +38,14 @@ export default function SocketIoProvider({
     }
   }, [])
 
+  const value = {
+    isConnected,
+    createRoom,
+    joinRoom,
+  }
+
   return (
-    <SocketIoContext.Provider value={{ isConnected }}>
+    <SocketIoContext.Provider value={value}>
       {children}
     </SocketIoContext.Provider>
   )
