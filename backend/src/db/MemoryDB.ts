@@ -1,4 +1,5 @@
-import { DB, Room } from './types'
+import { Engine } from '@gomoku/engine'
+import { DB, Room, User } from './types'
 
 export default class MemoryDB implements DB {
   private rooms: Room[] = []
@@ -15,25 +16,44 @@ export default class MemoryDB implements DB {
     return this.rooms
   }
 
-  async getRoom(roomId: string): Promise<Room | null> {
+  async getRoomById(roomId: string): Promise<Room | null> {
     return this.rooms.find(({ id }) => id === roomId) || null
   }
 
-  async createRoom(): Promise<string> {
+  async getRoomHasUser(userId: string): Promise<Room | null> {
+    return (
+      this.rooms.find(({ users }) => users.find(({ id }) => id === userId)) ||
+      null
+    )
+  }
+
+  async createRoom(user: User): Promise<string> {
     const roomId = this.generateUniqueRoomId()
     this.rooms.push({
       id: roomId,
-      users: [],
+      owner: user,
+      users: [user],
+      // we will set engine later when we have both players
+      engine: null as unknown as Engine,
     })
     return roomId
   }
 
-  async addUserToRoom(roomId: string, userId: string): Promise<void> {
+  async removeRoom(roomId: string): Promise<void> {
+    const roomIndex = this.rooms.findIndex(({ id }) => id === roomId)
+    if (roomIndex === -1) {
+      throw new Error(`Room ${roomId} not found`)
+    }
+    this.rooms.splice(roomIndex, 1)
+  }
+
+  async addUserToRoom(roomId: string, user: User): Promise<void> {
     const room = this.rooms.find(({ id }) => id === roomId)
     if (!room) {
       throw new Error(`Room ${roomId} not found`)
     }
-    room.users.push({ id: userId })
+
+    room.users.push(user)
   }
 
   async removeUserFromRoom(roomId: string, userId: string): Promise<void> {
@@ -46,5 +66,13 @@ export default class MemoryDB implements DB {
       throw new Error(`User ${userId} not found in room ${roomId}`)
     }
     room.users.splice(userIndex, 1)
+  }
+
+  async setEngine(roomId: string, engine: Engine): Promise<void> {
+    const room = this.rooms.find(({ id }) => id === roomId)
+    if (!room) {
+      throw new Error(`Room ${roomId} not found`)
+    }
+    room.engine = engine
   }
 }
