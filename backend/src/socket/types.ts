@@ -7,3 +7,7 @@ export interface GameState {
   winner: User | null
   winningPicks: number[][] | null
 }
+
+export type GameMove =
+  | { type: 'surrender' }
+  | { type: 'move'; row: number; column: number }
