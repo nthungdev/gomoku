@@ -1,4 +1,4 @@
-import { Server, Socket } from 'socket.io'
+import { Server } from 'socket.io'
 import { Server as HttpServer } from 'http'
 import {
   ACTION_CREATE_ROOM,
@@ -6,19 +6,10 @@ import {
   ACTION_LEAVE_ROOM,
   ACTION_MAKE_MOVE,
   ACTION_SURRENDER,
-  EVENT_GAME_OVER,
-  EVENT_USER_JOINED_ROOM,
-  EVENT_USER_LEFT_ROOM,
-  EVENT_USER_SURRENDERED,
 } from '@gomoku/common'
 import MemoryDB from '@/db/MemoryDB'
-import { DB } from '@/db/types'
 import roomHandler from './handlers/roomHandler'
 import gameHandler from './handlers/gameHandler'
-
-interface SocketWithDB extends Socket {
-  db: DB
-}
 
 export function startSocket(server: HttpServer) {
   const io = new Server(server, {
