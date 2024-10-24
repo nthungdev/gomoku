@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@gomoku/common": "0.0.1",
+    "@gomoku/engine": "0.0.1",
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
     "debug": "~2.6.9",
