@@ -14,7 +14,7 @@ export function getGameStateFromRoom(room: Room): GameState {
 
   return {
     boardState: engine.getBoardState(),
-    turnUser: turnUser,
+    turnUser,
     winner: winnerUser,
     winningPicks,
   }

@@ -5,17 +5,15 @@ import {
   EVENT_USER_MADE_MOVE,
   EVENT_USER_SURRENDERED,
 } from '@gomoku/common'
-import { Engine } from '@gomoku/engine'
+import { Engine, GameMove } from '@gomoku/engine'
 import { Server, Socket } from 'socket.io'
 import { getGameStateFromRoom } from '../utils'
-import { GameMove } from '../types'
 
 export default function gameHandler(io: Server, socket: Socket) {
   const userId = socket.id
 
   async function makeMove(roomId: string, move: GameMove) {
     if (move.type === 'move') {
-      // TODO validate move coordinates
       const room = await socket.db.getRoomById(roomId)
       if (!room) {
         // TODO send error message
@@ -27,11 +25,8 @@ export default function gameHandler(io: Server, socket: Socket) {
         // TODO send error message
         return
       }
-      const { winner } = room.engine.play(
-        player,
-        move.row,
-        move.column
-      )
+      // TODO handle invalid move error thrown by engine
+      const { winner } = room.engine.play(player, move)
       const gameState = getGameStateFromRoom(room)
       if (winner) {
         io.to(roomId).emit(EVENT_GAME_OVER, gameState)
@@ -47,13 +42,24 @@ export default function gameHandler(io: Server, socket: Socket) {
     }
   }
 
-  function surrender(roomId: string) {
-    // TODO validate this user is in the room
+  async function surrender(roomId: string) {
+    // validate the user is in the room
+    const room = await socket.db.getRoomById(roomId)
+    if (!room) {
+      // TODO send error message
+      return
+    }
 
-    // TODO handle surrender
+    const player = room.users.find((user) => user.id === userId)?.player
+    if (!player) {
+      // TODO send error message
+      return
+    }
 
-    // TODO get new game state
-    const gameState = {}
+    const move: GameMove = { type: 'surrender' }
+    room.engine.play(player, move)
+
+    const gameState = getGameStateFromRoom(room)
 
     io.to(roomId).emit(EVENT_USER_SURRENDERED, gameState)
     io.to(roomId).emit(EVENT_GAME_OVER, gameState)
