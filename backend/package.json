@@ -5,16 +5,19 @@
   "main": "index.js",
   "scripts": {
     "build": "npx tsc",
+    "start": "ts-node src/index.ts",
     "dev": "nodemon src/index.ts"
   },
   "dependencies": {
+    "@gomoku/common": "0.0.1",
+    "@gomoku/engine": "0.0.1",
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
     "debug": "~2.6.9",
     "dotenv": "^16.3.1",
     "express": "~4.16.1",
     "morgan": "~1.9.1",
-    "@gomoku/common": "0.0.1"
+    "socket.io": "^4.8.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
@@ -24,6 +27,7 @@
     "concurrently": "^8.2.0",
     "nodemon": "^3.0.1",
     "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.1.6"
   }
 }

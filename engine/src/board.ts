@@ -1,7 +1,9 @@
 const EMPTY_CELL_VALUE = 0
 
+export type BoardData = number[][]
+
 export default class Board {
-  private board: number[][]
+  private board: BoardData
 
   constructor(rows: number, columns: number) {
     console.assert(rows > 0, 'Rows should be greater than 0')
@@ -20,6 +22,9 @@ export default class Board {
     return this.board[row][column]
   }
 
+  /**
+   * @returns A copy of the board state
+   */
   public getState() {
     return this.board.map((row) => row.slice())
   }
