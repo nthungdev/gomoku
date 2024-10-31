@@ -42,6 +42,10 @@ export default class Engine {
   }
 
   public play(player: Player, move: GameMove) {
+    if (this.winner) {
+      throw new Error('Game is over')
+    }
+
     if (move.type === 'surrender') {
       this.winner = this.players.find((p) => p !== player)!
       return { winner: this.winner, winningPicks: [] }
