@@ -60,8 +60,8 @@ describe('Check winners', function () {
   tests.forEach((test, index) => {
     it(`should return the correct winner for test ${index + 1}`, function () {
       const boardSize = {
-        rows: test.board[0].length,
-        columns: test.board.length,
+        rows: test.board.length,
+        columns: test.board[0].length,
       }
       const testBoard = new Board(boardSize.rows, boardSize.columns)
       updateBoardWith(testBoard, test.board)
@@ -78,6 +78,26 @@ describe('Check winners', function () {
         winner: player1,
         winningPicks: test.winningPicks,
       })
+    })
+  })
+
+  it(`should return the correct winner when surrender`, function () {
+    const boardSize = {
+      rows: 10,
+      columns: 10,
+    }
+    const player1 = new Player({ value: 1 })
+    const player2 = new Player({ value: 2 })
+    const engine = new Engine({
+      boardSize,
+      winLength: 5,
+      player1,
+      player2,
+    })
+    engine.play(player1, { type: 'surrender' })
+    assert.deepEqual(engine.checkWin(), {
+      winner: player2,
+      winningPicks: [],
     })
   })
 })

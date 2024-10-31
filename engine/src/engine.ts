@@ -2,6 +2,10 @@ import Board from './board'
 import Player from './player'
 import assert from 'assert'
 
+export type GameMove =
+  | { type: 'surrender' }
+  | { type: 'move'; row: number; column: number }
+
 interface EngineConfig {
   boardSize: {
     rows: number
@@ -18,6 +22,8 @@ export default class Engine {
   private players: Player[]
   private turnPlayer: Player
   private config: EngineConfig
+  private winner: Player | null = null
+  private winningPicks: number[][] = []
 
   constructor(config: EngineConfig) {
     assert(
@@ -35,7 +41,14 @@ export default class Engine {
     return this.turnPlayer
   }
 
-  public play(player: Player, row: number, column: number) {
+  public play(player: Player, move: GameMove) {
+    if (move.type === 'surrender') {
+      this.winner = this.players.find((p) => p !== player)!
+      return { winner: this.winner, winningPicks: [] }
+    }
+
+    const { row, column } = move
+
     // check if the player is valid
     if (!this.players.find((p) => p === player)) {
       throw new Error('Invalid player')
@@ -75,6 +88,13 @@ export default class Engine {
    * @returns the player who wins the game, else null
    */
   public checkWin() {
+    if (this.winner) {
+      return {
+        winner: this.winner,
+        winningPicks: this.winningPicks,
+      }
+    }
+
     let winnerValue: number | null = null
     const { winLength } = this.config
     let winningPicks: number[][] = []
@@ -117,6 +137,12 @@ export default class Engine {
       }
     }
     const winner = this.players.find((player) => player.value === winnerValue)
+
+    if (winner) {
+      this.winner = winner
+      this.winningPicks = winningPicks
+    }
+
     return { winner, winningPicks }
   }
 
