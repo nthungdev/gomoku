@@ -6,7 +6,7 @@ export type GameMove =
   | { type: 'surrender' }
   | { type: 'move'; row: number; column: number }
 
-interface EngineConfig {
+export interface EngineConfig {
   boardSize: {
     rows: number
     columns: number

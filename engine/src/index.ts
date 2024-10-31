@@ -1,5 +1,9 @@
-import Engine from './engine';
-import Player from './player';
-import Board from './board';
+import Engine from './engine'
+import Player from './player'
+import Board from './board'
 
-export { Engine, Player, Board };
+export * from './engine'
+export * from './player'
+export * from './board'
+
+export { Engine, Player, Board }
