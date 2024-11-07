@@ -1,5 +1,6 @@
 import { Engine } from '@gomoku/engine'
 import { DB, Room, User } from './types'
+import { createDbError, DbErrorType } from './DbError'
 
 export default class MemoryDB implements DB {
   private rooms: Room[] = []
@@ -42,7 +43,7 @@ export default class MemoryDB implements DB {
   async removeRoom(roomId: string): Promise<void> {
     const roomIndex = this.rooms.findIndex(({ id }) => id === roomId)
     if (roomIndex === -1) {
-      throw new Error(`Room ${roomId} not found`)
+      throw createDbError(DbErrorType.RoomNotFoundError)
     }
     this.rooms.splice(roomIndex, 1)
   }
@@ -50,7 +51,7 @@ export default class MemoryDB implements DB {
   async addUserToRoom(roomId: string, user: User): Promise<void> {
     const room = this.rooms.find(({ id }) => id === roomId)
     if (!room) {
-      throw new Error(`Room ${roomId} not found`)
+      throw createDbError(DbErrorType.RoomNotFoundError)
     }
 
     room.users.push(user)
@@ -59,11 +60,11 @@ export default class MemoryDB implements DB {
   async removeUserFromRoom(roomId: string, userId: string): Promise<void> {
     const room = this.rooms.find(({ id }) => id === roomId)
     if (!room) {
-      throw new Error(`Room ${roomId} not found`)
+      throw createDbError(DbErrorType.RoomNotFoundError)
     }
     const userIndex = room.users.findIndex(({ id }) => id === userId)
     if (userIndex === -1) {
-      throw new Error(`User ${userId} not found in room ${roomId}`)
+      throw createDbError(DbErrorType.UserNotFoundError, { userId, roomId })
     }
     room.users.splice(userIndex, 1)
   }
@@ -71,8 +72,9 @@ export default class MemoryDB implements DB {
   async setEngine(roomId: string, engine: Engine): Promise<void> {
     const room = this.rooms.find(({ id }) => id === roomId)
     if (!room) {
-      throw new Error(`Room ${roomId} not found`)
+      throw createDbError(DbErrorType.RoomNotFoundError)
     }
     room.engine = engine
   }
 }
+

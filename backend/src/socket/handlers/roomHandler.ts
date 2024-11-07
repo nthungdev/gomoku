@@ -1,7 +1,10 @@
+import DbError, { DbErrorType } from '@/db/DbError'
 import { User } from '@/db/types'
 import { EVENT_USER_JOINED_ROOM, EVENT_USER_LEFT_ROOM } from '@gomoku/common'
 import { Player } from '@gomoku/engine'
 import { Server, Socket } from 'socket.io'
+import { SocketErrorMessage } from '../error'
+import { SocketCallback } from '../types'
 
 const PLAYER_1_VALUE = 1
 const PLAYER_2_VALUE = 2
@@ -11,11 +14,11 @@ const PLAYER_2_NAME = 'Player 2'
 export default function roomHandler(io: Server, socket: Socket) {
   const userId = socket.id
 
-  async function createRoom() {
+  async function createRoom(callback?: SocketCallback) {
     // make sure the user hasn't created a room already
     const room = await socket.db.getRoomHasUser(userId)
     if (room) {
-      // TODO send error message
+      callback?.({ error: SocketErrorMessage.RoomNotFound })
       return
     }
 
@@ -28,20 +31,20 @@ export default function roomHandler(io: Server, socket: Socket) {
     }
     const roomId = await socket.db.createRoom(user)
 
-    await joinRoom(roomId)
+    await joinRoom(roomId, callback)
   }
 
-  async function joinRoom(roomId: string) {
+  async function joinRoom(roomId: string, callback?: SocketCallback) {
     // validate room exists
     const room = await socket.db.getRoomById(roomId)
     if (!room) {
-      // TODO send error message
+      callback?.({ error: SocketErrorMessage.RoomNotFound })
       return
     }
 
-    // validate room isn't full
+    // validate room has slot
     if (room.users.length >= 2) {
-      // TODO send error message
+      callback?.({ error: SocketErrorMessage.RoomNotFound })
       return
     }
 
@@ -53,24 +56,37 @@ export default function roomHandler(io: Server, socket: Socket) {
       }),
     }
 
-    await socket.db.addUserToRoom(roomId, user)
-
-    socket.join(roomId)
-
-    io.to(roomId).emit(EVENT_USER_JOINED_ROOM, { userId })
+    try {
+      await socket.db.addUserToRoom(roomId, user)
+      socket.join(roomId)
+      io.to(roomId).emit(EVENT_USER_JOINED_ROOM, { userId })
+      callback?.({ ok: true })
+    } catch (error) {
+      let errorMessage = ''
+      if (error instanceof DbError) {
+        if (error.name === DbErrorType.RoomNotFoundError) {
+          errorMessage = SocketErrorMessage.RoomNotFound
+        } else {
+          errorMessage = SocketErrorMessage.Unknown
+        }
+      } else {
+        errorMessage = SocketErrorMessage.Unknown
+      }
+      callback?.({ error: SocketErrorMessage.RoomNotFound })
+    }
   }
 
-  async function leaveRoom(roomId: string) {
+  async function leaveRoom(roomId: string, callback?: SocketCallback) {
     // validate room exists
     const room = await socket.db.getRoomById(roomId)
     if (!room) {
-      // TODO send error message
+      callback?.({ error: SocketErrorMessage.RoomNotFound })
       return
     }
 
     // validate user is in the room
     if (!room.users.find((user) => user.id === userId)) {
-      // TODO send error message
+      callback?.({ error: SocketErrorMessage.UserNotInRoom })
       return
     }
 
@@ -80,11 +96,10 @@ export default function roomHandler(io: Server, socket: Socket) {
 
     io.to(roomId).emit(EVENT_USER_LEFT_ROOM, { userId })
 
-    // TODO delete room if empty
-
     if (room.users.length === 1) {
       await socket.db.removeRoom(roomId)
     }
+    callback?.({ ok: true })
   }
 
   return {

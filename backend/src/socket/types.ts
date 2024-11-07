@@ -7,3 +7,5 @@ export interface GameState {
   winner: User | null
   winningPicks: number[][] | null
 }
+
+export type SocketCallback = (data: any) => void

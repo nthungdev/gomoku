@@ -20,8 +20,25 @@ export interface DB {
    * Create a new room and return its ID
    */
   createRoom(user: User): Promise<string>
+  /**
+   * @throws
+   * - RoomNotFoundError
+   */
   removeRoom(roomId: string): Promise<void>
+  /**
+   * @throws
+   * - RoomNotFoundError
+   */
   addUserToRoom(roomId: string, user: User): Promise<void>
+  /**
+   * @throws
+   * - RoomNotFoundError
+   * - UserNotFoundError
+   */
   removeUserFromRoom(roomId: string, userId: string): Promise<void>
+  /**
+   * @throws
+   * - RoomNotFoundError
+   */
   setEngine(roomId: string, engine: Engine): Promise<void>
 }
