@@ -1,4 +1,8 @@
-export default function Home() {
+function HomeAuthenticated() {
+  return <div>Authenticated Home</div>
+}
+
+function HomeUnauthenticated() {
   return (
     <div className="flex-1 flex flex-col items-center justify-center gap-y-4">
       <div className="text-center">
@@ -17,4 +21,10 @@ export default function Home() {
       </div>
     </div>
   )
+}
+
+export default function Home() {
+  const isAuthenticated = true
+
+  return isAuthenticated ? <HomeAuthenticated /> : <HomeUnauthenticated />
 }
