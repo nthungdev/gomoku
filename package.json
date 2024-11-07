@@ -12,7 +12,7 @@
     "clean": "rm -rf cmd/dist client/dist",
     "backend": "cd backend && yarn dev",
     "engine:build": "cd engine && yarn build",
-    "web": "cd web && yarn start",
+    "web": "cd web && yarn dev",
     "cli": "cd cli && yarn start",
     "dev": "concurrently \"yarn backend\" \"yarn web\""
   },
