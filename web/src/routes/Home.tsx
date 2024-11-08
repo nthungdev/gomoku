@@ -1,3 +1,5 @@
+import BasePage from '../components/BasePage'
+
 function HomeAuthenticated() {
   return <div>Authenticated Home</div>
 }
@@ -26,5 +28,9 @@ function HomeUnauthenticated() {
 export default function Home() {
   const isAuthenticated = true
 
-  return isAuthenticated ? <HomeAuthenticated /> : <HomeUnauthenticated />
+  return (
+    <BasePage>
+      {isAuthenticated ? <HomeAuthenticated /> : <HomeUnauthenticated />}
+    </BasePage>
+  )
 }
