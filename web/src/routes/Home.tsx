@@ -1,36 +1,52 @@
 import BasePage from '../components/BasePage'
+import useAuth from '../hooks/useAuth'
 
-function HomeAuthenticated() {
-  return <div>Authenticated Home</div>
+function HomeMenuDivider() {
+  return <div className="h-px bg-gray-300 w-3/4 mx-auto my-1"></div>
 }
 
-function HomeUnauthenticated() {
-  return (
-    <div className="flex-1 flex flex-col items-center justify-center gap-y-4">
-      <div className="text-center">
-        <p className="text-xl">Welcome to the Gomoku!</p>
-      </div>
+function HomeMenu() {
+  const { isAuthenticated } = useAuth()
+  const menuItemClasses =
+    'py-1 rounded-md disabled:text-gray-400 disabled:pointer-events-none transition-colors hover:bg-gray-300 hover:font-bold'
 
-      <div className="py-2 text-center w-full max-w-xs bg-gray-100 rounded-lg">
-        <div className="flex flex-col px-2 divide-y">
-          <a className="hover:bg-gray-200 py-1 rounded-md" href="/signin">
+  return (
+    <div className="py-2 w-full max-w-xs flex flex-col px-2 mx-auto text-center rounded-lg bg-gray-200">
+      {isAuthenticated ? (
+        <>
+          <button className={menuItemClasses}>New Game</button>
+          <HomeMenuDivider />
+          <button className={menuItemClasses}>Join</button>
+          <HomeMenuDivider />
+          <button disabled className={menuItemClasses}>
+            Settings
+          </button>
+        </>
+      ) : (
+        <>
+          <a className={menuItemClasses} href="/signin">
             Sign In
           </a>
-          <a className="hover:bg-gray-200 py-1 rounded-md" href="/signup">
+          <HomeMenuDivider />
+          <a className={menuItemClasses} href="/signup">
             Sign Up
           </a>
-        </div>
-      </div>
+        </>
+      )}
     </div>
   )
 }
 
 export default function Home() {
-  const isAuthenticated = true
-
   return (
-    <BasePage>
-      {isAuthenticated ? <HomeAuthenticated /> : <HomeUnauthenticated />}
+    <BasePage className="flex flex-col justify-center">
+      <div className="space-y-8">
+        <div className="text-center">
+          <p className="text-xl font-bold">Welcome to Gomoku!</p>
+        </div>
+
+        <HomeMenu />
+      </div>
     </BasePage>
   )
 }
