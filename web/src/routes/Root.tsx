@@ -3,9 +3,11 @@ import Header from '../components/Header'
 
 function Root() {
   return (
-    <div className="flex flex-col w-full min-h-screen">
+    <div className="flex flex-col w-full min-h-screen bg-gray-50">
       <Header />
-      <Outlet />
+      <div className="flex-1 overflow-y-auto flex flex-col">
+        <Outlet />
+      </div>
     </div>
   )
 }
