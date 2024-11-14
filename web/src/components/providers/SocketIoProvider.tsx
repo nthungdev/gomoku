@@ -8,7 +8,8 @@ export default function SocketIoProvider({
 }: {
   children: React.ReactNode
 }) {
-  const [isConnected, setIsConnected] = useState(socket.connected)
+  const [id, setId] = useState(socket.id)
+  const isConnected = !!id
 
   function joinRoom(roomId: string) {
     socket.emit(ACTION_JOIN_ROOM, roomId)
@@ -20,11 +21,11 @@ export default function SocketIoProvider({
 
   useEffect(() => {
     function onConnect() {
-      setIsConnected(true)
+      setId(socket.id)
     }
 
     function onDisconnect() {
-      setIsConnected(false)
+      setId(undefined)
     }
 
     socket.on('connect', onConnect)
@@ -38,11 +39,22 @@ export default function SocketIoProvider({
     }
   }, [])
 
-  const value = {
-    isConnected,
-    createRoom,
+  const baseValue = {
     joinRoom,
+    createRoom,
   }
+
+  const value = isConnected
+    ? {
+        id,
+        isConnected,
+        ...baseValue,
+      }
+    : {
+        id: undefined,
+        isConnected,
+        ...baseValue,
+      }
 
   return (
     <SocketIoContext.Provider value={value}>
