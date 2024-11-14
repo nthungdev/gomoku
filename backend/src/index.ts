@@ -12,7 +12,7 @@ app.get('/', (req, res) => {
   res.send('Gomoku Server!')
 })
 
-startSocket(server)
+startSocket(server, app.locals.db)
 
 server.listen(port, () => {
   console.log(`Server listening on http://localhost:${port}`)

@@ -7,11 +7,11 @@ import {
   ACTION_MAKE_MOVE,
   ACTION_SURRENDER,
 } from '@gomoku/common'
-import MemoryDB from '@/db/MemoryDB'
 import roomHandler from './handlers/roomHandler'
 import gameHandler from './handlers/gameHandler'
+import { DB } from '@/db/types'
 
-export function startSocket(server: HttpServer) {
+export function startSocket(server: HttpServer, db: DB) {
   const io = new Server(server, {
     cors: {
       origin: 'http://localhost:5173',
@@ -20,7 +20,7 @@ export function startSocket(server: HttpServer) {
 
   // Attach DB to socket
   io.use(function (socket, next) {
-    socket.db = new MemoryDB()
+    socket.db = db
     next()
   })
 
