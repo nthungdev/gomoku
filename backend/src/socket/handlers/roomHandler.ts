@@ -5,6 +5,7 @@ import { Player } from '@gomoku/engine'
 import { Server, Socket } from 'socket.io'
 import { SocketErrorMessage } from '../error'
 import { SocketCallback } from '../types'
+import { Request } from 'express'
 
 const PLAYER_1_VALUE = 1
 const PLAYER_2_VALUE = 2
@@ -12,9 +13,10 @@ const PLAYER_1_NAME = 'Player 1'
 const PLAYER_2_NAME = 'Player 2'
 
 export default function roomHandler(io: Server, socket: Socket) {
-  const userId = socket.id
+  const request = socket.request as Request
+  const userId = request.sessionID
 
-  async function createRoom(callback?: SocketCallback) {
+  async function createRoom({ callback }: { callback?: SocketCallback } = {}) {
     // make sure the user hasn't created a room already
     const room = await socket.db.getRoomHasUser(userId)
     if (room) {
@@ -31,10 +33,18 @@ export default function roomHandler(io: Server, socket: Socket) {
     }
     const roomId = await socket.db.createRoom(user)
 
-    await joinRoom(roomId, callback)
+    console.info(`User ${userId} created room ${roomId}`)
+
+    socket.join(roomId)
+    io.to(roomId).emit(EVENT_USER_JOINED_ROOM, { userId })
+
+    callback?.({ ok: true })
   }
 
-  async function joinRoom(roomId: string, callback?: SocketCallback) {
+  async function joinRoom(
+    roomId: string,
+    { callback }: { callback?: SocketCallback } = {}
+  ) {
     // validate room exists
     const room = await socket.db.getRoomById(roomId)
     if (!room) {
@@ -76,7 +86,10 @@ export default function roomHandler(io: Server, socket: Socket) {
     }
   }
 
-  async function leaveRoom(roomId: string, callback?: SocketCallback) {
+  async function leaveRoom(
+    roomId: string,
+    { callback }: { callback?: SocketCallback } = {}
+  ) {
     // validate room exists
     const room = await socket.db.getRoomById(roomId)
     if (!room) {
