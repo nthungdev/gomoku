@@ -5,3 +5,4 @@ tsconfig.node.*
 tsconfig.tsbuildinfo
 coverage
 .nyc_output
+backend/data/sessions.sqlite

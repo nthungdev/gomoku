@@ -8,10 +8,6 @@ dotenv.config()
 const port = process.env.PORT || 8000
 const server: Server = createServer(app)
 
-app.get('/', (req, res) => {
-  res.send('Gomoku Server!')
-})
-
 startSocket(server, app.locals.db)
 
 server.listen(port, () => {
