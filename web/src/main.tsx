@@ -4,12 +4,12 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import './index.css'
 
-import SocketIoProvider from './components/providers/SocketIoProvider.tsx'
-import Root from './routes/Root.tsx'
-import SignIn from './routes/SignIn.tsx'
-import SignUp from './routes/SignUp.tsx'
-import Home from './routes/Home.tsx'
-import { Flowbite } from 'flowbite-react'
+import Root from '@/routes/Root'
+import Home from '@/routes/Home'
+import SignIn from '@/routes/SignIn'
+import SignUp from '@/routes/SignUp'
+import SocketIoProvider from '@/components/providers/SocketIoProvider'
+import Room from '@/routes/Room'
 
 const router = createBrowserRouter([
   {
@@ -27,6 +27,10 @@ const router = createBrowserRouter([
       {
         path: 'signup',
         element: <SignUp />,
+      },
+      {
+        path: 'room/:roomId',
+        element: <Room />,
       },
     ],
   },

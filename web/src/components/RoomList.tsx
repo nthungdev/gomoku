@@ -1,5 +1,7 @@
 import { useQuery } from 'react-query'
 import { GetRoomsResponse } from '../../../backend/src/routes/types'
+import { useNavigate } from 'react-router-dom'
+import { useSocketIoContext } from '@/contexts/SocketIoContext'
 
 function useRooms() {
   return useQuery({
@@ -13,9 +15,12 @@ function useRooms() {
 
 export default function RoomList() {
   const { status, data, error, isFetching } = useRooms()
+  const navigate = useNavigate()
+  const {  joinRoom } = useSocketIoContext()
 
-  function enterRoom() {
-    // TODO
+  async function enterRoom(roomId: string) {
+    await joinRoom(roomId)
+    navigate(`/room/${roomId}`)
   }
 
   return (
@@ -30,12 +35,12 @@ export default function RoomList() {
         ) : (
           <>
             <div className="space-y-2">
-              {data?.ok &&
+              {data?.ok && data.data.length ? (
                 data.data.map((room) => (
-                  <div
+                  <button
                     key={room.id}
-                    className="bg-gray-100 rounded-md p-2 space-y-2"
-                    onClick={enterRoom}
+                    className="w-full bg-gray-100 rounded-md p-2 space-y-2"
+                    onClick={() => enterRoom(room.id)}
                   >
                     <p>Room {room.id}</p>
                     <div className="flex flex-row justify-center">
@@ -48,8 +53,11 @@ export default function RoomList() {
                         </div>
                       ))}
                     </div>
-                  </div>
-                ))}
+                  </button>
+                ))
+              ) : (
+                <div className="text-center">No room available</div>
+              )}
             </div>
             <div>{isFetching ? 'Background Updating...' : ' '}</div>
           </>

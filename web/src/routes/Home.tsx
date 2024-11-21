@@ -4,6 +4,7 @@ import { useSocketIoContext } from '@/contexts/SocketIoContext'
 import useAuth from '@/hooks/useAuth'
 import RoomList from '@/components/RoomList'
 import BasePage from '@/components/BasePage'
+import { useNavigate } from 'react-router-dom'
 
 function HomeMenuDivider() {
   return <div className="h-px bg-gray-300 w-3/4 mx-auto my-1"></div>
@@ -16,14 +17,15 @@ function HomeMenu() {
   const { isAuthenticated } = useAuth()
   const { createRoom } = useSocketIoContext()
   const [showRooms, setShowRooms] = useState(false)
+  const navigate = useNavigate()
 
   function handleJoinGameClick() {
     setShowRooms(true)
   }
 
-  function handleNewGame() {
-    createRoom()
-    // TODO: Redirect to the game page
+  async function handleNewGame() {
+    const roomId = await createRoom()
+    navigate(`/room/${roomId}`)
   }
 
   return (

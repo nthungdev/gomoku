@@ -11,25 +11,27 @@ export default function SocketIoProvider({
   const [id, setId] = useState(socket.id)
   const isConnected = !!id
 
-  function joinRoom(roomId: string) {
-    socket.emit(ACTION_JOIN_ROOM, roomId)
+  async function joinRoom(roomId: string) {
+    await socket.emitWithAck(ACTION_JOIN_ROOM, roomId)
+    // TODO: handle ack response
   }
 
-  function createRoom() {
-    socket.emit(ACTION_CREATE_ROOM)
+  async function createRoom() {
+    const response = await socket.emitWithAck(ACTION_CREATE_ROOM)
+    // TODO: handle ack response not ok
+    if (response.ok) {
+      return response.data.roomId
+    }
   }
 
   useEffect(() => {
-    function onConnect() {
-      // setId(socket.id)
-    }
+    function onConnect() {}
 
     function onDisconnect() {
       setId(undefined)
     }
 
     function onId(id: string) {
-      console.log('got clientId', {id})
       setId(id)
     }
 
