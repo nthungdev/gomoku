@@ -6,7 +6,7 @@ function useRooms() {
     queryKey: ['rooms'],
     queryFn: async (): Promise<GetRoomsResponse> => {
       const response = await fetch(`${import.meta.env.VITE_API_ORIGIN}/rooms`)
-      return response.json()
+      return await response.json()
     },
   })
 }
@@ -25,28 +25,31 @@ export default function RoomList() {
           'Loading...'
         ) : status === 'error' ? (
           <span>Error: {(error as Error).message || ''}</span>
+        ) : data?.ok === false ? (
+          <span>Error: {data?.error}</span>
         ) : (
           <>
             <div className="space-y-2">
-              {data?.rooms.map((room) => (
-                <div
-                  key={room.id}
-                  className="bg-gray-100 rounded-md p-2 space-y-2"
-                  onClick={enterRoom}
-                >
-                  <p>Room {room.id}</p>
-                  <div className="flex flex-row justify-center">
-                    {room.users.map((user, index) => (
-                      <div
-                        key={`${user.id}-${index}`}
-                        className="rounded-full bg-yellow-400 text-white px-3 py-0.5"
-                      >
-                        Player {index + 1}
-                      </div>
-                    ))}
+              {data?.ok &&
+                data.data.map((room) => (
+                  <div
+                    key={room.id}
+                    className="bg-gray-100 rounded-md p-2 space-y-2"
+                    onClick={enterRoom}
+                  >
+                    <p>Room {room.id}</p>
+                    <div className="flex flex-row justify-center">
+                      {room.users.map((user, index) => (
+                        <div
+                          key={`${user.id}-${index}`}
+                          className="rounded-full bg-yellow-400 text-white px-3 py-0.5"
+                        >
+                          Player {index + 1}
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
             <div>{isFetching ? 'Background Updating...' : ' '}</div>
           </>

@@ -6,7 +6,7 @@ roomsRouter.get('/', async (req, res, next) => {
   try {
     const rooms = await req.app.locals.db.getRooms()
     res.status(200)
-    res.json({ ok: true, rooms })
+    res.json({ ok: true, data: rooms })
   } catch (error: unknown) {
     next(error)
   }
@@ -30,7 +30,7 @@ roomsRouter.get('/:roomId', async (req, res, next) => {
     }
 
     res.status(200)
-    res.json({ ok: true, room })
+    res.json({ ok: true, data: room })
   } catch (error: unknown) {
     next(error)
   }
