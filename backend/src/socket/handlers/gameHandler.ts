@@ -1,3 +1,5 @@
+import { Request } from 'express'
+import { Server, Socket } from 'socket.io'
 import {
   EVENT_GAME_OVER,
   EVENT_GAME_STARTED,
@@ -5,18 +7,18 @@ import {
   EVENT_USER_SURRENDERED,
 } from '@gomoku/common'
 import { Engine, GameMove } from '@gomoku/engine'
-import { Server, Socket } from 'socket.io'
 import { getGameStateFromRoom } from '../utils'
 import { SocketCallback } from '../types'
 import { SocketErrorMessage } from '../error'
 
 export default function gameHandler(io: Server, socket: Socket) {
-  const userId = socket.id
+  const request = socket.request as Request
+  const userId = request.sessionID
 
   async function makeMove(
     roomId: string,
     move: GameMove,
-    callback?: SocketCallback
+    { callback }: { callback?: SocketCallback } = {}
   ) {
     if (move.type === 'move') {
       const room = await socket.db.getRoomById(roomId)
@@ -48,7 +50,10 @@ export default function gameHandler(io: Server, socket: Socket) {
     }
   }
 
-  async function surrender(roomId: string, callback?: SocketCallback) {
+  async function surrender(
+    roomId: string,
+    { callback }: { callback?: SocketCallback } = {}
+  ) {
     // validate the user is in the room
     const room = await socket.db.getRoomById(roomId)
     if (!room) {
@@ -72,7 +77,10 @@ export default function gameHandler(io: Server, socket: Socket) {
     callback?.({ ok: true })
   }
 
-  async function startGame(roomId: string, callback?: SocketCallback) {
+  async function startGame(
+    roomId: string,
+    { callback }: { callback?: SocketCallback } = {}
+  ) {
     // validate this user is the room owner
     const room = await socket.db.getRoomById(roomId)
     if (room?.owner.id !== userId) {

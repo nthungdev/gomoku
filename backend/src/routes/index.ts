@@ -11,4 +11,8 @@ indexRouter.post('/1', async (_, res, next) => {
   }
 })
 
+indexRouter.get('/', (_, res) => {
+  res.send('Gomoku Server!')
+})
+
 export default indexRouter
