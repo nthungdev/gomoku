@@ -21,15 +21,21 @@ export default function SocketIoProvider({
 
   useEffect(() => {
     function onConnect() {
-      setId(socket.id)
+      // setId(socket.id)
     }
 
     function onDisconnect() {
       setId(undefined)
     }
 
+    function onId(id: string) {
+      console.log('got clientId', {id})
+      setId(id)
+    }
+
     socket.on('connect', onConnect)
     socket.on('disconnect', onDisconnect)
+    socket.on('id', onId)
 
     socket.connect()
 
