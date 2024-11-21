@@ -18,7 +18,7 @@ export default function gameHandler(io: Server, socket: Socket) {
   async function makeMove(
     roomId: string,
     move: GameMove,
-    { callback }: { callback?: SocketCallback } = {}
+    callback?: SocketCallback
   ) {
     if (move.type === 'move') {
       const room = await socket.db.getRoomById(roomId)
@@ -50,10 +50,7 @@ export default function gameHandler(io: Server, socket: Socket) {
     }
   }
 
-  async function surrender(
-    roomId: string,
-    { callback }: { callback?: SocketCallback } = {}
-  ) {
+  async function surrender(roomId: string, callback?: SocketCallback) {
     // validate the user is in the room
     const room = await socket.db.getRoomById(roomId)
     if (!room) {
@@ -77,10 +74,7 @@ export default function gameHandler(io: Server, socket: Socket) {
     callback?.({ ok: true })
   }
 
-  async function startGame(
-    roomId: string,
-    { callback }: { callback?: SocketCallback } = {}
-  ) {
+  async function startGame(roomId: string, callback?: SocketCallback) {
     // validate this user is the room owner
     const room = await socket.db.getRoomById(roomId)
     if (room?.owner.id !== userId) {
