@@ -7,7 +7,7 @@ export default function Header() {
   return (
     <Navbar fluid className="bg-primary py-2 shadow-sm">
       <div className="w-full max-w-screen-lg mx-auto px-2 flex flex-row flex-wrap justify-between">
-        <Navbar.Brand>
+        <Navbar.Brand href="/">
           <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
             Gomoku
           </span>
