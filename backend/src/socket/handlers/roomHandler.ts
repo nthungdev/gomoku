@@ -51,7 +51,7 @@ export default function roomHandler(io: Server, socket: Socket) {
 
     // validate room has slot
     if (room.users.length >= 2) {
-      callback?.({ error: SocketErrorMessage.RoomNotFound })
+      callback?.({ error: SocketErrorMessage.RoomFull })
       return
     }
 
