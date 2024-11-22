@@ -12,8 +12,9 @@ export default function SocketIoProvider({
   const isConnected = !!id
 
   async function joinRoom(roomId: string) {
-    await socket.emitWithAck(ACTION_JOIN_ROOM, roomId)
+    const response = await socket.emitWithAck(ACTION_JOIN_ROOM, roomId)
     // TODO: handle ack response
+    return response
   }
 
   async function createRoom() {

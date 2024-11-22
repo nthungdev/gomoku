@@ -2,7 +2,7 @@ import { createContext, useContext } from 'react'
 
 interface SocketIoContextBase {
   isConnected: boolean
-  joinRoom: (roomId: string) => Promise<void>
+  joinRoom: (roomId: string) => Promise<any>
   createRoom: () => Promise<string>
 }
 

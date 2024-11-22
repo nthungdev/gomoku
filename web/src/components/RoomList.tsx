@@ -19,7 +19,11 @@ export default function RoomList() {
   const {  joinRoom } = useSocketIoContext()
 
   async function enterRoom(roomId: string) {
-    await joinRoom(roomId)
+    const response = await joinRoom(roomId)
+    if (!response.ok) {
+      window.alert(response.error)
+      return
+    }
     navigate(`/room/${roomId}`)
   }
 
