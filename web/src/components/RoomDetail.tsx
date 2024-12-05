@@ -10,13 +10,13 @@ function RoomDetail({ room }: { room: Room }) {
         <p>Room {room.id}</p>
         <div className="flex flex-col">
           {player1 && (
-            <div className="">
+            <div className="text-blue-500">
               {player1.player.name} {player1.id}
             </div>
           )}
 
           {player2 && (
-            <div className="">
+            <div className="text-red-500">
               {player2.player.name} {player2.id}
             </div>
           )}

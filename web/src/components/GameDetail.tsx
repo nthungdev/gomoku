@@ -3,10 +3,12 @@ import { Room } from '../../../backend/src/db/types'
 import clsx from 'clsx'
 
 function GameDetail({ room }: { room: Room }) {
-  const { myTurn, game } = useGame(room.id)
+  const { myTurn, game, started } = useGame(room.id)
+
+  if (!started) return null
 
   const hasWinner = game?.winner
-  const winnerName = game?.winner.player.name
+  const winnerName = game?.winner?.player.name
 
   return (
     <div>

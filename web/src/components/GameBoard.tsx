@@ -7,7 +7,7 @@ import useGameState from '@/hooks/useGameState'
 function GameBoard({ room }: { room: Room }) {
   const { status, data, error, isFetching, refetch } = useGameState(room.id)
   const { makeMove } = useSocketIoContext()
-  const { game, over ,myTurn } = useGame(room.id)
+  const { game, over, myTurn } = useGame(room.id)
 
   if (!game) {
     return null
@@ -16,6 +16,8 @@ function GameBoard({ room }: { room: Room }) {
   if (data?.ok) {
     console.log('game data', data)
   }
+
+  const winningPicks = game.winningPicks
 
   function handleMove(row: number, col: number) {
     if (over) return
@@ -34,9 +36,17 @@ function GameBoard({ room }: { room: Room }) {
                   key={j}
                   className={clsx(
                     'flex items-center justify-center w-6 h-6 border border-gray-300 ',
+                    winningPicks?.find(
+                      ([row, col]) => row === i && col === j
+                    ) &&
+                      (cell === 1
+                        ? 'bg-blue-200 border-blue-400'
+                        : 'bg-red-200 border-red-400'),
                     cell === 1 ? 'text-blue-500' : 'text-red-500',
-                    !over && 'hover:cursor-pointer hover:bg-primary-100',
-                    !myTurn  && 'hover:cursor-not-allowed'
+                    !over &&
+                      (myTurn
+                        ? 'hover:cursor-pointer hover:bg-primary-100'
+                        : 'hover:cursor-not-allowed')
                   )}
                   onClick={() => handleMove(i, j)}
                 >
