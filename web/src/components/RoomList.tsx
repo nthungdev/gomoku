@@ -47,7 +47,8 @@ export default function RoomList() {
                     onClick={() => enterRoom(room.id)}
                   >
                     <p>Room {room.id}</p>
-                    <div className="flex flex-row justify-center">
+                    <p>{room.engine ? 'started' : 'not started'}</p>
+                    <div className="flex flex-row justify-center gap-x-2">
                       {room.users.map((user, index) => (
                         <div
                           key={`${user.id}-${index}`}
