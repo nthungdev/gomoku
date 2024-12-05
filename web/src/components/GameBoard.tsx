@@ -2,19 +2,13 @@ import useGame from '@/hooks/useGame'
 import { Room } from '../../../backend/src/db/types'
 import clsx from 'clsx'
 import { useSocketIoContext } from '@/contexts/SocketIoContext'
-import useGameState from '@/hooks/useGameState'
 
 function GameBoard({ room }: { room: Room }) {
-  const { status, data, error, isFetching, refetch } = useGameState(room.id)
   const { makeMove } = useSocketIoContext()
   const { game, over, myTurn } = useGame(room.id)
 
   if (!game) {
     return null
-  }
-
-  if (data?.ok) {
-    console.log('game data', data)
   }
 
   const winningPicks = game.winningPicks
