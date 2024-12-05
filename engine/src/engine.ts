@@ -158,22 +158,28 @@ export default class Engine {
   ) {
     const winningPicks = [[x, y]]
     let streakCount = 1
-    const streakMap = {
+    const streakMap: Record<string, number[]> = {
       horizontal: [0, 1],
       vertical: [1, 0],
-      diagonal: [1, 1],
+      diagonal1: [1, 1],
+      diagonal2: [1, -1],
     }
-    const [dx, dy] = streakMap[direction]
-    for (const pick of picks) {
-      const [x1, y1] = pick
-      if (x1 === x + dx * streakCount && y1 === y + dy * streakCount) {
-        streakCount++
-        winningPicks.push([x1, y1])
-        if (streakCount === this.config.winLength) {
-          return winningPicks
+    const directions = direction === 'diagonal' ? ['diagonal1', 'diagonal2'] : [direction]
+
+    for (const direction of directions) {
+      const [dx, dy] = streakMap[direction]
+      for (const pick of picks) {
+        const [x1, y1] = pick
+        if (x1 === x + dx * streakCount && y1 === y + dy * streakCount) {
+          streakCount++
+          winningPicks.push([x1, y1])
+          if (streakCount === this.config.winLength) {
+            return winningPicks
+          }
         }
       }
     }
+
     return []
   }
 

@@ -28,7 +28,7 @@
   },
   "include": [
     "src",
-    // "../backend/src/routes/**/types.ts",
+    "../backend/src/routes/**/types.ts",
     "../backend/src/**/types.ts"
   ]
 }

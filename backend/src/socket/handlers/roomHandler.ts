@@ -16,11 +16,11 @@ export default function roomHandler(io: Server, socket: Socket) {
   const request = socket.request as Request
   const userId = request.sessionID
 
-  async function createRoom({ callback }: { callback?: SocketCallback } = {}) {
+  async function createRoom(callback?: SocketCallback) {
     // make sure the user hasn't created a room already
     const room = await socket.db.getRoomHasUser(userId)
     if (room) {
-      callback?.({ error: SocketErrorMessage.RoomNotFound })
+      callback?.({ error: SocketErrorMessage.AlreadyInRoom })
       return
     }
 
@@ -38,13 +38,10 @@ export default function roomHandler(io: Server, socket: Socket) {
     socket.join(roomId)
     io.to(roomId).emit(EVENT_USER_JOINED_ROOM, { userId })
 
-    callback?.({ ok: true })
+    callback?.({ ok: true, data: { roomId } })
   }
 
-  async function joinRoom(
-    roomId: string,
-    { callback }: { callback?: SocketCallback } = {}
-  ) {
+  async function joinRoom(roomId: string, callback?: SocketCallback) {
     // validate room exists
     const room = await socket.db.getRoomById(roomId)
     if (!room) {
@@ -54,7 +51,7 @@ export default function roomHandler(io: Server, socket: Socket) {
 
     // validate room has slot
     if (room.users.length >= 2) {
-      callback?.({ error: SocketErrorMessage.RoomNotFound })
+      callback?.({ error: SocketErrorMessage.RoomFull })
       return
     }
 
@@ -86,10 +83,7 @@ export default function roomHandler(io: Server, socket: Socket) {
     }
   }
 
-  async function leaveRoom(
-    roomId: string,
-    { callback }: { callback?: SocketCallback } = {}
-  ) {
+  async function leaveRoom(roomId: string, callback?: SocketCallback) {
     // validate room exists
     const room = await socket.db.getRoomById(roomId)
     if (!room) {

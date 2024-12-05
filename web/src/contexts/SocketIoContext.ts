@@ -1,9 +1,13 @@
+import { GameMove } from '@gomoku/engine'
 import { createContext, useContext } from 'react'
 
 interface SocketIoContextBase {
   isConnected: boolean
-  joinRoom: (roomId: string) => void
-  createRoom: () => void
+  joinRoom: (roomId: string) => Promise<any>
+  createRoom: () => Promise<string>
+  startGame: (roomId: string) => Promise<any>
+  makeMove: (roomId: string, move: GameMove) => Promise<any>
+  surrender: (roomId: string) => Promise<any>
 }
 
 interface ConnectedSocketIoContext extends SocketIoContextBase {

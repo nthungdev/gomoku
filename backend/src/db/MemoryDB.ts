@@ -1,6 +1,7 @@
 import { Engine } from '@gomoku/engine'
 import { DB, Room, User } from './types'
 import { createDbError, DbErrorType } from './DbError'
+import { getGameStateFromRoom } from '@/socket/utils'
 
 export default class MemoryDB implements DB {
   private rooms: Room[] = []
@@ -23,8 +24,15 @@ export default class MemoryDB implements DB {
 
   async getRoomHasUser(userId: string): Promise<Room | null> {
     return (
-      this.rooms.find(({ users }) => users.find(({ id }) => id === userId)) ||
-      null
+      this.rooms.find((room) => {
+        // engine is lazy initialized when the game starts
+        if (room.engine === null) return false
+        const gameState = getGameStateFromRoom(room)
+        // if the game is over, we don't want to return the room
+        if (gameState.winner) return false
+        const { users } = room
+        return users.find(({ id }) => id === userId)
+      }) || null
     )
   }
 
@@ -77,4 +85,3 @@ export default class MemoryDB implements DB {
     room.engine = engine
   }
 }
-
