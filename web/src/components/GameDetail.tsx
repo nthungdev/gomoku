@@ -5,40 +5,42 @@ import clsx from 'clsx'
 function GameDetail({ room }: { room: Room }) {
   const { myTurn, game, started } = useGame(room.id)
 
-  if (!started) return null
-
   const hasWinner = game?.winner
   const winnerName = game?.winner?.player.name
+  const roomNotFull = room.users.length < 2
 
   return (
     <div>
-      {!hasWinner && (
-        <div
-          className={clsx(
-            game?.turnUser.player.value === 1 ? 'text-blue-500' : 'text-red-500'
-          )}
-        >
-          {myTurn ? 'Your turn' : "Opponent's turn"}
-        </div>
-      )}
+      {roomNotFull && <div>Waiting for an opponent to join...</div>}
 
-      {hasWinner && (
-        <div>
-          Game Over
-          <p>
-            <span
-              className={clsx(
-                game.winner.player.value === 1
-                  ? 'text-blue-500'
-                  : 'text-red-500'
-              )}
-            >
-              {winnerName}
-            </span>{' '}
-            won!
-          </p>
-        </div>
-      )}
+      {started &&
+        (hasWinner ? (
+          <div>
+            Game Over
+            <p>
+              <span
+                className={clsx(
+                  game.winner.player.value === 1
+                    ? 'text-blue-500'
+                    : 'text-red-500'
+                )}
+              >
+                {winnerName}
+              </span>{' '}
+              won!
+            </p>
+          </div>
+        ) : (
+          <div
+            className={clsx(
+              game?.turnUser.player.value === 1
+                ? 'text-blue-500'
+                : 'text-red-500'
+            )}
+          >
+            {myTurn ? 'Your turn' : "Opponent's turn"}
+          </div>
+        ))}
     </div>
   )
 }
