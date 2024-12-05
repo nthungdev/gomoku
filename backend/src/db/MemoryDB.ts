@@ -25,6 +25,8 @@ export default class MemoryDB implements DB {
   async getRoomHasUser(userId: string): Promise<Room | null> {
     return (
       this.rooms.find((room) => {
+        // engine is lazy initialized when the game starts
+        if (room.engine === null) return false
         const gameState = getGameStateFromRoom(room)
         // if the game is over, we don't want to return the room
         if (gameState.winner) return false
