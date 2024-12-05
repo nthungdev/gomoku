@@ -11,6 +11,7 @@ function updateBoardWith(board: Board, sampleBoard: number[][]) {
 
 describe('Check winners', function () {
   const tests = [
+    // horizontal win
     {
       board: [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -24,7 +25,7 @@ describe('Check winners', function () {
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       ],
-      winnerValue: 1,
+      winningValue: 1,
       winningPicks: [
         [3, 2],
         [3, 3],
@@ -33,6 +34,30 @@ describe('Check winners', function () {
         [3, 6],
       ],
     },
+    // vertical win
+    {
+      board: [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 2, 2, 2, 2, 0, 0, 0, 0, 0],
+        [0, 2, 0, 0, 0, 0, 0, 0, 0, 0],
+        [2, 2, 1, 1, 1, 1, 2, 0, 0, 0],
+        [0, 2, 2, 0, 2, 2, 0, 2, 0, 0],
+        [0, 2, 1, 0, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      ],
+      winningValue: 2,
+      winningPicks: [
+        [1, 1],
+        [2, 1],
+        [3, 1],
+        [4, 1],
+        [5, 1],
+      ],
+    },
+    // diagonal win
     {
       board: [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -55,6 +80,29 @@ describe('Check winners', function () {
         [7, 6],
       ],
     },
+    // diagonal win
+    {
+      board: [
+        [0, 0, 0, 0, 2, 0, 0, 0, 0, 0],
+        [0, 2, 2, 2, 0, 0, 0, 0, 0, 0],
+        [0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
+        [0, 2, 1, 1, 1, 1, 2, 0, 0, 0],
+        [2, 0, 2, 1, 2, 2, 0, 2, 0, 0],
+        [0, 2, 0, 1, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      ],
+      winningValue: 2,
+      winningPicks: [
+        [0, 4],
+        [1, 3],
+        [2, 2],
+        [3, 1],
+        [4, 0],
+      ],
+    },
   ]
 
   tests.forEach((test, index) => {
@@ -75,7 +123,7 @@ describe('Check winners', function () {
       })
       engine.replaceBoard(testBoard)
       assert.deepEqual(engine.checkWin(), {
-        winner: player1,
+        winner: test.winningValue === 1 ? player1 : player2,
         winningPicks: test.winningPicks,
       })
     })
