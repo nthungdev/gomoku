@@ -9,10 +9,7 @@ import RoomDetail from '@/components/RoomDetail'
 
 export default function Room() {
   const { roomId } = useParams()
-
   const { status, data, error, isFetching } = useRoom(roomId || '')
-
-  console.log({ data })
 
   return (
     <BasePage>
