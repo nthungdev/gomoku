@@ -5,6 +5,7 @@ import {
   ACTION_JOIN_ROOM,
   ACTION_LEAVE_ROOM,
   ACTION_MAKE_MOVE,
+  ACTION_START_GAME,
   ACTION_SURRENDER,
 } from '@gomoku/common'
 import roomHandler from './handlers/roomHandler'
@@ -15,6 +16,7 @@ import { Request } from 'express'
 
 export function startSocket(server: HttpServer, db: DB) {
   const io = new Server(server, {
+    connectionStateRecovery: {},
     cors: {
       // TODO whitelist production domain
       origin: /.*/,
@@ -37,7 +39,7 @@ export function startSocket(server: HttpServer, db: DB) {
     const userId = request.sessionID
 
     const { createRoom, joinRoom, leaveRoom } = roomHandler(io, socket)
-    const { makeMove, surrender } = gameHandler(io, socket)
+    const { makeMove, surrender, startGame } = gameHandler(io, socket)
 
     console.log('New connection:', userId)
 
@@ -55,6 +57,7 @@ export function startSocket(server: HttpServer, db: DB) {
 
     socket.on(ACTION_MAKE_MOVE, makeMove)
     socket.on(ACTION_SURRENDER, surrender)
+    socket.on(ACTION_START_GAME, startGame)
   })
 
   return io

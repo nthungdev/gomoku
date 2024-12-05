@@ -20,7 +20,7 @@ export default function roomHandler(io: Server, socket: Socket) {
     // make sure the user hasn't created a room already
     const room = await socket.db.getRoomHasUser(userId)
     if (room) {
-      callback?.({ error: SocketErrorMessage.RoomNotFound })
+      callback?.({ error: SocketErrorMessage.AlreadyInRoom })
       return
     }
 

@@ -25,7 +25,9 @@ function HomeMenu() {
 
   async function handleNewGame() {
     const roomId = await createRoom()
-    navigate(`/room/${roomId}`)
+    if (roomId) {
+      navigate(`/room/${roomId}`)
+    }
   }
 
   return (
